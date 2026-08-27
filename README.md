@@ -1,7 +1,9 @@
 # Deep Learning Lab — Practical & Question Bank
 
 **Programme:** Master of Computer Applications (MCA)
+
 **Institution:** Mizoram University, Aizawl, Mizoram, India
+
 **Course:** Deep Learning Lab (Practical Work / Lab Records)
 
 This repository contains the lab exercises and practical records for the MCA Deep
