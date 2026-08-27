@@ -268,6 +268,33 @@ python part_e/pe12_mizo_transformer.py    # trains 4 translation directions
 
 ---
 
+## Part F — Music / Audio: MIDI, WAV & Composition
+
+Practical exercises for music information processing: build (or download) a MIDI
+dataset, extract features, classify genre, and **compose new music**. A shared
+`part_f/music_utils.py` synthesizes a multi-genre MIDI-style dataset when no real
+`.mid` files are present, and can load real datasets (MAESTRO / Lakh / Wikifonia)
+via `pretty_midi` if you point `download_or_load()` at a folder of
+`<genre>/*.mid` files. WAV synthesis/spectrograms use only the stdlib `wave`
+module + numpy (no `librosa` required); MIDI export uses `pretty_midi` when present
+and falls back to `.npz` otherwise.
+
+| File | Task | Model / Technique |
+|------|------|-------------------|
+| `part_f/pf01_midi_features.py` | MIDI/WAV loading + EDA | feature extraction, boxplots, WAV spectrograms |
+| `part_f/pf02_genre_classifier.py` | Genre classification | RandomForest + MLP, ROC/confusion, timing |
+| `part_f/pf03_lstm_composer.py` | Music composition | LSTM language model over note tokens |
+| `part_f/pf04_transformer_composer.py` | Music composition | Decoder-only Transformer LM (genre-tokenized) |
+| `part_f/pf05_vae_composer.py` | Style representation | VAE latent space + genre interpolation (style transfer) |
+
+```bash
+python part_f/pf01_midi_features.py        # dataset, features, WAV + spectrograms
+python part_f/pf03_lstm_composer.py        # generates part_f/generated/lstm_composition.mid
+python part_f/pf05_vae_composer.py         # interpolates classical<->rock in latent space
+```
+
+---
+
 ## Repository Layout
 ```
 DL_Lab/
@@ -276,7 +303,8 @@ DL_Lab/
 ├── part_b/                  # ext01.py ... ext50.py                (CNN/RNN/GAN/GNN)
 ├── part_c/                  # pc01..pc05 dataset exercises + figures/
 ├── part_d/                  # pd01..pd13 network-security exercises, security_utils.py, data/ + figures/
-└── part_e/                  # pe01..pe12 NLP/Transformer/LLM + Mizo translation, data/ + figures/
+├── part_e/                  # pe01..pe12 NLP/Transformer/LLM + Mizo translation, data/ + figures/
+└── part_f/                  # pf01..pf05 music/MIDI/WAV composition, music_utils.py, data/ + generated/ + figures/
 ```
 
 ## Requirements & Installation
