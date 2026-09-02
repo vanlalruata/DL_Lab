@@ -1,32 +1,45 @@
 import matplotlib.pyplot as plt
-import tensorflow as tf
-from tensorflow.keras import layers, models, datasets
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torchvision import datasets, transforms
 
 # 1. Train a basic model on CIFAR-10 (RGB images) for 1 epoch
-(x_train, y_train), _ = datasets.cifar10.load_data()
-x_train = x_train[:5000] / 255.0  # Subset for fast classroom execution
-y_train = y_train[:5000]
+transform = transforms.Compose([transforms.ToTensor()])
+train_set = datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
 
-model = models.Sequential([
-    layers.Input(shape=(32, 32, 3)),
-    layers.Conv2D(16, (3, 3), activation='relu', padding='same', name='conv_layer_1'),
-    layers.MaxPooling2D((2, 2)),
-    layers.Flatten(),
-    layers.Dense(10)
-])
+x_train = torch.stack([train_set[i][0] for i in range(5000)])  # (5000, 3, 32, 32)
+y_train = torch.tensor([train_set[i][1] for i in range(5000)], dtype=torch.long)
 
-model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True))
-model.fit(x_train, y_train, epochs=1, batch_size=64, verbose=0)
+# 2. Build simple CNN
+model = nn.Sequential(
+    nn.Conv2d(3, 16, kernel_size=3, padding=1),
+    nn.ReLU(),
+    nn.MaxPool2d(2, 2),
+    nn.Flatten(),
+    nn.Linear(16 * 16 * 16, 10)
+)
+
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters())
+
+model.train()
+optimizer.zero_grad()
+logits = model(x_train)
+loss = criterion(logits, y_train)
+loss.backward()
+optimizer.step()
 
 # 2. Extract Learned Weights from First Conv Layer
-weights, _ = model.get_layer('conv_layer_1').get_weights()  # Shape: (3, 3, 3, 16)
+weights = model[0].weight.detach().numpy()  # Shape: (16, 3, 3, 3)
 
 # 3. Visualize the 16 Learned Filters (Averaged across RGB channels)
 fig, axes = plt.subplots(2, 8, figsize=(16, 4))
 axes = axes.flatten()
 
 for i in range(16):
-    filter_kernel = weights[:, :, :, i].mean(axis=-1)  # Mean across color channels
+    filter_kernel = weights[i, :, :, :].mean(axis=0)  # Mean across input channels
     axes[i].imshow(filter_kernel, cmap='viridis')
     axes[i].set_title(f"Filter {i+1}")
     axes[i].axis('off')

@@ -1,42 +1,60 @@
-import tensorflow as tf
-from tensorflow.keras import layers, models
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 # 1. Build the Conv1D Architecture
-model = models.Sequential([
-    # Input shape: (Time_Steps / Sequence_Length, Features_Per_Step)
-    # Example: A sequence of 10 time steps, each with 1 sensor feature
-    layers.Input(shape=(10, 1)),
-    
-    # Conv1D: 4 filters, kernel_size 3 (sliding window of 3 time steps)
-    # Output shape: (10 - 3 + 1) = (8, 4)
-    layers.Conv1D(filters=4, kernel_size=3, activation='relu'),
-    
-    # MaxPool1D: pooling window of 2
-    # Output shape: 8 / 2 = (4, 4)
-    layers.MaxPooling1D(pool_size=2),
-    
-    # Flatten: 4 time steps * 4 filters = 16 features
-    layers.Flatten(),
-    
-    # Dense Classification Head: 2 output classes (logits)
-    layers.Dense(units=2)
-])
+class Conv1DNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # Conv1D: 4 filters, kernel_size 3 (sliding window of 3 time steps)
+        # Input: (batch, 1, 10) -> Output: (batch, 4, 8)
+        self.conv = nn.Conv1d(in_channels=1, out_channels=4, kernel_size=3)
+        # MaxPool1D: pooling window of 2 -> Output: (batch, 4, 4)
+        self.pool = nn.MaxPool1d(kernel_size=2)
+        self.flatten = nn.Flatten()
+        # Dense Classification Head: 2 output classes (logits)
+        self.fc = nn.Linear(4 * 4, 2)
 
-# 2. Compile Model
-model.compile(
-    optimizer=tf.keras.optimizers.Adam(learning_rate=0.01),
-    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-    metrics=['accuracy']
-)
+    def forward(self, x):
+        x = F.relu(self.conv(x))
+        x = self.pool(x)
+        x = self.flatten(x)
+        x = self.fc(x)
+        return x
+
+model = Conv1DNet()
+
+# 2. Loss and Optimizer
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 # Display architecture and dimensions
-model.summary()
+print(model)
+total_params = sum(p.numel() for p in model.parameters())
+print(f"Total parameters: {total_params}")
 
 # 3. Create Synthetic Sequential Data
 # 6 sequence samples of length 10, with 1 feature per step
-X_train = tf.random.normal(shape=(6, 10, 1))
-y_train = tf.constant([0, 1, 0, 1, 1, 0])
+torch.manual_seed(0)
+X_train = torch.randn(6, 1, 10)
+y_train = torch.tensor([0, 1, 0, 1, 1, 0])
 
 # 4. Train the Model (5 Epochs)
 print("\nStarting Training:")
-history = model.fit(X_train, y_train, epochs=5, batch_size=2, verbose=1)
+for epoch in range(5):
+    model.train()
+    permutation = torch.randperm(X_train.size(0))
+    epoch_loss = 0.0
+    correct = 0
+    for i in range(0, X_train.size(0), 2):
+        idx = permutation[i:i+2]
+        batch_x, batch_y = X_train[idx], y_train[idx]
+        optimizer.zero_grad()
+        logits = model(batch_x)
+        loss = criterion(logits, batch_y)
+        loss.backward()
+        optimizer.step()
+        epoch_loss += loss.item() * batch_x.size(0)
+        correct += (logits.argmax(dim=1) == batch_y).sum().item()
+    n = X_train.size(0)
+    print(f"Epoch {epoch+1}/5 - loss: {epoch_loss/n:.4f} - acc: {correct/n:.4f}")

@@ -155,6 +155,26 @@ translation and POS tagging).
 49. Use a GNN for link prediction (edge existence) with negative sampling.
 50. Implement a readout/pooling layer for graph-level classification (e.g., molecular property prediction).
 
+### Part B — PyTorch CNN Exercises
+They sit alongside the 50-question bank and demonstrate the same CNN ideas end-to-end with PyTorch.
+
+| File | Topic | What it shows |
+|------|-------|----------------|
+| `part_b/exe00.py` | 2D CNN on synthetic images | Build a 3x3-Conv -> ReLU -> MaxPool -> Dense CNN in `torch.nn`, train on random 8x8 data, print loss/acc per epoch. |
+| `part_b/ex01.py` | 1D CNN over sequences | Build a `nn.Conv1d` -> ReLU -> MaxPool1d -> Dense model for sequence classification, mini-batch SGD training loop. |
+| `part_b/ex02.py` | 3D CNN on volumetric data | `nn.Conv3d` + `nn.MaxPool3d` over (frames, H, W) inputs; binary classification with a 2-class dense head. |
+| `part_b/ex03.py` | Custom convolution kernels (Sobel, Sharpen) | Handcrafted 3x3 filters loaded into `nn.Conv2d` weights; applies them to a real image fetched from a public URL. |
+| `part_b/ex04.py` | Visualizing learned CNN filters | Trains one epoch of a small CNN on CIFAR-10, then plots the 16 learned 3x3 kernels from the first conv layer. |
+| `part_b/ex05.py` | Real-image binary classification (cats vs dogs) | Downloads the cats_and_dogs_filtered dataset, builds a 3-conv-layer CNN, trains 5 epochs, and shows sample predictions. |
+| `part_b/ex06.py` | Cat vs Dog on CIFAR-10 (binary) | Filters CIFAR-10 to classes {cat, dog}, trains a CNN with `BCEWithLogitsLoss` for 5 epochs, visualizes predictions. |
+
+```bash
+python part_b/exe00.py          # tiny synthetic CNN
+python part_b/ex03.py           # handcrafted Sobel/sharpen filter visualization
+python part_b/ex05.py           # cats vs dogs (auto-downloads dataset)
+python part_b/ex06.py           # CIFAR-10 cat vs dog (auto-downloads)
+```
+
 ---
 
 ---
@@ -302,7 +322,7 @@ python part_f/pf05_vae_composer.py         # interpolates classical<->rock in la
 DL_Lab/
 ├── README.md                # this file (syllabus + 50-question bank + exercises)
 ├── part_a/                  # practical_1.py ... practical_20.py  (Module labs)
-├── part_b/                  # ext01.py ... ext50.py                (CNN/RNN/GAN/GNN)
+├── part_b/                  # ext01..ext50 (CNN/RNN/GAN/GNN question bank) + exe00, ex01..ex06 (TF->PyTorch CNN ports)
 ├── part_c/                  # pc01..pc05 dataset exercises + figures/
 ├── part_d/                  # pd01..pd13 network-security exercises, security_utils.py, data/ + figures/
 ├── part_e/                  # pe01..pe12 NLP/Transformer/LLM + Mizo translation, data/ + figures/
@@ -322,7 +342,7 @@ All practicals share a common core; some need deep-learning or graph libraries.
 | `scipy` | Part D (stats, `f_classif` backend) | ANOVA / hypothesis testing |
 | `pandas` | Part D (INSDN CSV parsing in `security_utils.py`) | Tabular data loading |
 | `torch` | Part A (10,18–20), Part B (ext05–20,23–41), Part C (pc03/04/05), Part D (all `pd`) | Neural nets, autograd, training loops |
-| `torchvision` | Part A (18,19), Part B (20), Part C (pc03/04) | MNIST / Fashion-MNIST datasets, pretrained models |
+| `torchvision` | Part A (18,19), Part B (20, ex04, ex05, ex06), Part C (pc03/04) | MNIST / Fashion-MNIST / CIFAR-10 / cats-vs-dogs datasets, pretrained models |
 | `torch_geometric` | Part B (ext45) | GCN/GAT/GraphSAGE on Cora (optional) |
 | `nltk` / `transformers` | Part B (ext27–28 tokenization, optional) | Text datasets / tokenizers (optional) |
 | `shap` | Part D (`security_utils.shap_summary`) | Model interpretability (feature attributions) |

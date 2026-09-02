@@ -1,42 +1,61 @@
-import tensorflow as tf
-from tensorflow.keras import layers, models
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 # 1. Build the Conv3D Architecture
-model = models.Sequential([
-    # Input shape: (Depth/Frames, Height, Width, Channels)
-    # Example: A video clip of 8 frames, 16x16 resolution, 1 grayscale channel
-    layers.Input(shape=(8, 16, 16, 1)),
-    
-    # Conv3D: 4 filters, 3x3x3 kernel (valid padding)
-    # Output shape: (8-3+1, 16-3+1, 16-3+1, 4) = (6, 14, 14, 4)
-    layers.Conv3D(filters=4, kernel_size=(3, 3, 3), activation='relu'),
-    
-    # MaxPool3D: 2x2x2 pooling window
-    # Output shape: (6/2, 14/2, 14/2, 4) = (3, 7, 7, 4)
-    layers.MaxPooling3D(pool_size=(2, 2, 2)),
-    
-    # Flatten: 3 * 7 * 7 * 4 = 588 features
-    layers.Flatten(),
-    
-    # Dense Classification Head: 2 output classes (e.g., Action A vs Action B)
-    layers.Dense(units=2)
-])
+class Conv3DNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # Conv3D: 4 filters, 3x3x3 kernel (valid padding)
+        # Input: (batch, 1, 8, 16, 16) -> Output: (batch, 4, 6, 14, 14)
+        self.conv = nn.Conv3d(in_channels=1, out_channels=4, kernel_size=3)
+        # MaxPool3D: 2x2x2 pooling window
+        # Output: (batch, 4, 3, 7, 7)
+        self.pool = nn.MaxPool3d(kernel_size=2)
+        self.flatten = nn.Flatten()
+        # Dense Classification Head: 2 output classes
+        self.fc = nn.Linear(3 * 7 * 7 * 4, 2)
 
-# 2. Compile Model
-model.compile(
-    optimizer=tf.keras.optimizers.Adam(learning_rate=0.01),
-    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-    metrics=['accuracy']
-)
+    def forward(self, x):
+        x = F.relu(self.conv(x))
+        x = self.pool(x)
+        x = self.flatten(x)
+        x = self.fc(x)
+        return x
+
+model = Conv3DNet()
+
+# 2. Loss and Optimizer
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 # Display architecture and parameter breakdown
-model.summary()
+print(model)
+total_params = sum(p.numel() for p in model.parameters())
+print(f"Total parameters: {total_params}")
 
 # 3. Create Synthetic 3D Volumetric Data
 # 4 video samples of shape (8 frames, 16 height, 16 width, 1 channel)
-X_train = tf.random.normal(shape=(4, 8, 16, 16, 1))
-y_train = tf.constant([0, 1, 1, 0])
+torch.manual_seed(0)
+X_train = torch.randn(4, 1, 8, 16, 16)
+y_train = torch.tensor([0, 1, 1, 0])
 
 # 4. Train the Model (5 Epochs)
 print("\nStarting Training:")
-history = model.fit(X_train, y_train, epochs=5, batch_size=2, verbose=1)
+for epoch in range(5):
+    model.train()
+    permutation = torch.randperm(X_train.size(0))
+    epoch_loss = 0.0
+    correct = 0
+    for i in range(0, X_train.size(0), 2):
+        idx = permutation[i:i+2]
+        batch_x, batch_y = X_train[idx], y_train[idx]
+        optimizer.zero_grad()
+        logits = model(batch_x)
+        loss = criterion(logits, batch_y)
+        loss.backward()
+        optimizer.step()
+        epoch_loss += loss.item() * batch_x.size(0)
+        correct += (logits.argmax(dim=1) == batch_y).sum().item()
+    n = X_train.size(0)
+    print(f"Epoch {epoch+1}/5 - loss: {epoch_loss/n:.4f} - acc: {correct/n:.4f}")
