@@ -93,6 +93,55 @@ translation and POS tagging).
   Build a 10-layer feedforward net with `nn.SELU`/`nn.AlphaDropout`; record mean and
   variance of hidden activations to verify the self-normalizing property.
 
+### Module 7: Simple DNN (Deep Neural Networks) — Hidden Layers
+
+Introduces fully-connected networks with one or more hidden layers. The first
+three practicals are written **entirely in NumPy** (no torch, no tensorflow) so
+the forward and backward passes are explicit. The remaining practicals use
+**PyTorch** to study how depth, activations, regularisation, normalisation and
+initialisation affect a DNN.
+
+#### From-scratch DNN (pure NumPy)
+- **Practical 21 — 2-Layer DNN Forward Pass from Scratch (NumPy)**
+  Build a 2-layer MLP (input → hidden → output) using only NumPy: weight init,
+  ReLU + sigmoid activations, and visualise the *untrained* decision boundary.
+- **Practical 22 — 2-Layer DNN with Manual Backpropagation (NumPy)**
+  Hand-code the full forward + backward pass (no autograd) for a 2-8-1 network
+  with sigmoid + BCE; train on `make_moons` and visualise the learned boundary.
+- **Practical 23 — 3-Layer DNN & Vanishing Gradients (NumPy)**
+  2-8-4-1 network; compare the gradient magnitudes at each layer for
+  Sigmoid vs ReLU to show why ReLU mitigates vanishing gradients.
+
+#### DNN in PyTorch
+- **Practical 24 — 2-Layer DNN in PyTorch (autograd)**
+  Re-implement Practical 22 using `nn.Module`, `nn.Linear`, `BCELoss` and
+  `torch.optim.SGD`; confirm the same decision boundary is learned.
+- **Practical 25 — Deeper DNN (4 Hidden Layers)**
+  A 2→32→16→8→4→1 MLP on `make_circles`; plot train/val loss & accuracy curves.
+- **Practical 26 — Activation Function Comparison in a DNN**
+  Train the same 3-hidden-layer MLP with Sigmoid, Tanh, ReLU, and LeakyReLU;
+  compare final validation accuracy.
+- **Practical 27 — DNN with Dropout Regularisation**
+  Same MLP trained with p=0 vs p=0.5 dropout; visualise the train/val
+  loss gap and show that dropout reduces overfitting.
+- **Practical 28 — DNN with Batch Normalisation**
+  Compare training curves with and without `nn.BatchNorm1d`; BN converges
+  faster and to a lower loss at a higher learning rate.
+- **Practical 29 — DNN Weight Initialisation (Random vs Xavier vs He)**
+  4-hidden-layer ReLU MLP initialised three ways; show that Kaiming/He init
+  gives the lowest training loss.
+- **Practical 30 — DNN with Early Stopping & Learning-Rate Scheduling**
+  `ReduceLROnPlateau` LR schedule plus early stopping that saves the best
+  model state on validation loss; shows the saved best epoch and the LR decay
+  curve.
+
+```bash
+python part_a/practical_21.py   # numpy forward pass
+python part_a/practical_22.py   # numpy backprop
+python part_a/practical_24.py   # same model in PyTorch
+python part_a/practical_28.py   # BatchNorm comparison
+```
+
 ---
 
 ## Part B — Extended Question Bank (50 questions)
@@ -321,7 +370,7 @@ python part_f/pf05_vae_composer.py         # interpolates classical<->rock in la
 ```
 DL_Lab/
 ├── README.md                # this file (syllabus + 50-question bank + exercises)
-├── part_a/                  # practical_1.py ... practical_20.py  (Module labs)
+├── part_a/                  # practical_1..20 (Module labs) + practical_21..30 (Simple DNN, Module 7) + figures/
 ├── part_b/                  # ext01..ext50 (CNN/RNN/GAN/GNN question bank) + exe00, ex01..ex06 (TF->PyTorch CNN ports)
 ├── part_c/                  # pc01..pc05 dataset exercises + figures/
 ├── part_d/                  # pd01..pd13 network-security exercises, security_utils.py, data/ + figures/
