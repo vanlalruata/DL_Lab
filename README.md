@@ -184,6 +184,24 @@ python part_a/practical_28.py   # BatchNorm comparison
 33. Compare teacher forcing vs scheduled sampling in sequence generation.
 34. Implement a stacked (multi-layer) LSTM and analyze representational depth.
 
+### RNN Architectures — Practical Demonstrations (51–56)
+51. Demonstrate Many-to-Many RNN architecture (POS tagging): implement both from-scratch NumPy vanilla RNN and PyTorch `nn.RNN` version on a POS tagging task where each time step produces an output tag.
+52. Demonstrate One-to-Many RNN architecture (music/text generation): implement both vanilla RNN and PyTorch `nn.RNN` for sequence generation from a single input (music melody generation, image captioning).
+53. Demonstrate Many-to-One RNN architecture (sentiment classification): implement both vanilla RNN and PyTorch `nn.RNN` where a full input sequence maps to a single classification label.
+54. Vanilla RNN from scratch (NumPy): build RNN cell, forward pass, BPTT with gradient clipping, momentum optimizer, and train on sine-wave prediction — no frameworks at all.
+55. PyTorch RNN covering all three architectures: `nn.RNN` for Many-to-Many (POS tagging), One-to-Many (sequence generation), and Many-to-One (sentiment classification); includes RNN/LSTM/GRU comparison and teacher forcing discussion.
+56. English-Mizo Text-to-Text translation using Seq2Seq RNN with Bahdanau attention and POS embeddings: load parallel corpus (engmiz.txt), build vocabularies, train encoder-decoder, demonstrate translation with attention visualization and POS analysis.
+
+#### Files
+| File | Architecture | What it shows |
+|------|-------------|----------------|
+| `part_b/ext51_many_to_many_rnn.py` | Many-to-Many | Vanilla RNN (NumPy) + PyTorch RNN for POS tagging; output at every time step |
+| `part_b/ext52_one_to_many_rnn.py` | One-to-Many | Vanilla RNN (NumPy) + PyTorch RNN for music generation + image captioning demo |
+| `part_b/ext53_many_to_one_rnn.py` | Many-to-One | Vanilla RNN (NumPy) + PyTorch RNN for sentiment analysis + speech rec + anomaly detection demos |
+| `part_b/ext54_vanilla_rnn_scratch.py` | Vanilla RNN | Pure NumPy RNN cell, BPTT, gradient flow analysis, sine-wave training, architecture comparison |
+| `part_b/ext55_pytorch_rnn_all.py` | PyTorch RNN | `nn.RNN` for all three architectures + RNN/LSTM/GRU comparison + teacher forcing |
+| `part_b/mizen_trans.py` | Many-to-Many Seq2Seq | English-Mizo T2T translation using `nn.RNN` + Bahdanau attention + POS embeddings; real parallel corpus (engmiz.txt) |
+
 ### GANs (35–43)
 35. Implement a basic GAN (generator + discriminator MLP) on a 2D Gaussian mixture.
 36. Explain the minimax objective and the Nash equilibrium of a GAN.
@@ -224,11 +242,18 @@ python part_b/ex05.py           # cats vs dogs (auto-downloads dataset)
 python part_b/ex06.py           # CIFAR-10 cat vs dog (auto-downloads)
 ```
 
----
+### Part B — PyTorch RNN Exercises
 
----
+| File | Topic | What it shows |
+|------|-------|----------------|
+| `part_b/ext51_many_to_many_rnn.py` | Many-to-Many RNN | POS tagging with vanilla NumPy RNN + PyTorch `nn.RNN`; output at every time step |
+| `part_b/ext52_one_to_many_rnn.py` | One-to-Many RNN | Music generation + image captioning with vanilla NumPy RNN + PyTorch `nn.RNN` |
+| `part_b/ext53_many_to_one_rnn.py` | Many-to-One RNN | Sentiment analysis with vanilla NumPy RNN + PyTorch `nn.RNN`; sequence → single label |
+| `part_b/ext54_vanilla_rnn_scratch.py` | Vanilla RNN from scratch | Pure NumPy RNN cell, BPTT, gradient clipping, sine-wave prediction |
+| `part_b/ext55_pytorch_rnn_all.py` | PyTorch RNN all architectures | `nn.RNN` for Many-to-Many, One-to-Many, Many-to-One; RNN/LSTM/GRU comparison |
+| `part_b/mizen_trans.py` | English-Mizo T2T Translation | Seq2Seq RNN with attention + POS on engmiz parallel corpus |
 
-## Part C — Dataset Exercises (EDA, Train/Validate/Test + Plots)
+### Part C — Dataset Exercises (EDA, Train/Validate/Test + Plots)
 
 Each exercise performs dataset analysis, trains a model with a validation split,
 reports test accuracy/loss, plots accuracy & loss curves, plots ROC (one-vs-rest /
@@ -371,7 +396,7 @@ python part_f/pf05_vae_composer.py         # interpolates classical<->rock in la
 DL_Lab/
 ├── README.md                # this file (syllabus + 50-question bank + exercises)
 ├── part_a/                  # practical_1..20 (Module labs) + practical_21..30 (Simple DNN, Module 7) + figures/
-├── part_b/                  # ext01..ext50 (CNN/RNN/GAN/GNN question bank) + exe00, ex01..ex06 (TF->PyTorch CNN ports)
+├── part_b/                  # ext01..ext55 (CNN/RNN/GAN/GNN question bank) + exe00..ex06 (TF->PyTorch CNN ports) + ext51..ext55 (RNN architecture demos)
 ├── part_c/                  # pc01..pc05 dataset exercises + figures/
 ├── part_d/                  # pd01..pd13 network-security exercises, security_utils.py, data/ + figures/
 ├── part_e/                  # pe01..pe12 NLP/Transformer/LLM + Mizo translation, data/ + figures/
