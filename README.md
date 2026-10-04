@@ -186,7 +186,7 @@ python part_a/practical_28_batch_normalisation.py    # BatchNorm comparison
 33. Compare teacher forcing vs scheduled sampling in sequence generation. (`part_b/rnn_q33_teacher_forcing.py`)
 34. Implement a stacked (multi-layer) LSTM and analyze representational depth. (`part_b/rnn_q34_stacked_lstm.py`)
 
-### RNN Architectures — Practical Demonstrations (51–57)
+### RNN Architectures — Practical Demonstrations (51–59)
 51. Demonstrate Many-to-Many RNN architecture (POS tagging): implement both from-scratch NumPy vanilla RNN and PyTorch `nn.RNN` version on a POS tagging task where each time step produces an output tag. (`part_b/rnn_ex51_many_to_many_pos.py`)
 52. Demonstrate One-to-Many RNN architecture (music/text generation): implement both vanilla RNN and PyTorch `nn.RNN` for sequence generation from a single input (music melody generation, image captioning). (`part_b/rnn_ex52_one_to_many_music_gen.py`)
 53. Demonstrate Many-to-One RNN architecture (sentiment classification): implement both vanilla RNN and PyTorch `nn.RNN` where a full input sequence maps to a single classification label. (`part_b/rnn_ex53_many_to_one_sentiment.py`)
@@ -194,6 +194,8 @@ python part_a/practical_28_batch_normalisation.py    # BatchNorm comparison
 55. PyTorch RNN covering all three architectures: `nn.RNN` for Many-to-Many (POS tagging), One-to-Many (sequence generation), and Many-to-One (sentiment classification); includes RNN/LSTM/GRU comparison and teacher forcing discussion. (`part_b/rnn_ex55_pytorch_rnn_all_arch.py`)
 56. English-Mizo Text-to-Text translation using Seq2Seq RNN with Bahdanau attention and POS embeddings: load parallel corpus (engmiz.txt), build vocabularies, train encoder-decoder, demonstrate translation with attention visualization and POS analysis. (`part_b/rnn_ex56_eng_mizo_seq2seq.py`)
 57. Vanilla LSTM from scratch (NumPy): scalar and vector LSTM cells matching classroom calculations, Bahdanau attention, all three architecture patterns (Many-to-Many, One-to-Many, Many-to-One), training loop, parameter count calculation, and RNN vs LSTM comparison. (`part_b/rnn_ex57_lstm_numpy_classroom.py`)
+58. Vanilla GRU from scratch (NumPy): scalar and vector GRU cells, exact classroom blackboard arithmetic trace, 3 recurrent architectures, manual BPTT training loop, parameter count derivation, and vanishing gradient comparison. (`part_b/rnn_ex58_gru_numpy_classroom.py`)
+59. GRU sequence forecasting & comparative lab exercise (PyTorch): Custom GRU cell vs PyTorch `nn.GRU` vs LSTM vs Vanilla RNN on composite multi-harmonic sequence modeling, training convergence curves, test MSE/MAE, and student lab exercises. (`part_b/rnn_ex59_gru_exercise.py`)
 
 #### Files
 | File | Architecture | What it shows |
@@ -205,6 +207,8 @@ python part_a/practical_28_batch_normalisation.py    # BatchNorm comparison
 | `part_b/rnn_ex55_pytorch_rnn_all_arch.py` | PyTorch RNN | `nn.RNN` for all three architectures + RNN/LSTM/GRU comparison + teacher forcing |
 | `part_b/rnn_ex56_eng_mizo_seq2seq.py` | Many-to-Many Seq2Seq | English-Mizo T2T translation using `nn.RNN` + Bahdanau attention + POS embeddings; real parallel corpus (engmiz.txt) |
 | `part_b/rnn_ex57_lstm_numpy_classroom.py` | Vanilla LSTM | Pure NumPy LSTM: scalar & vector cells, classroom calculations, all 3 architectures, training, RNN vs LSTM |
+| `part_b/rnn_ex58_gru_numpy_classroom.py` | Vanilla GRU | Pure NumPy GRU: scalar arithmetic trace, vector cell, manual BPTT, 3 architectures, parameter derivation |
+| `part_b/rnn_ex59_gru_exercise.py` | PyTorch GRU Exercise | Custom GRU vs Native PyTorch GRU vs LSTM vs RNN benchmark, convergence plots, student lab exercises |
 
 ### GANs (35–43)
 35. Implement a basic GAN (generator + discriminator MLP) on a 2D Gaussian mixture. (`part_b/gan_q35_basic_gan_2d.py`)
@@ -251,7 +255,7 @@ python part_b/cnn_ex07_numpy_forward_step_by_step.py # NumPy manual CNN forward 
 python part_b/cnn_ex09_mnist_cnn_pytorch.py        # complete MNIST training pipeline
 ```
 
-### Part B — PyTorch RNN Exercises
+### Part B — PyTorch RNN & GRU Exercises
 
 | File | Topic | What it shows |
 |------|-------|----------------|
@@ -262,6 +266,13 @@ python part_b/cnn_ex09_mnist_cnn_pytorch.py        # complete MNIST training pip
 | `part_b/rnn_ex55_pytorch_rnn_all_arch.py` | PyTorch RNN all architectures | `nn.RNN` for Many-to-Many, One-to-Many, Many-to-One; RNN/LSTM/GRU comparison |
 | `part_b/rnn_ex56_eng_mizo_seq2seq.py` | English-Mizo T2T Translation | Seq2Seq RNN with attention + POS on engmiz parallel corpus |
 | `part_b/rnn_ex57_lstm_numpy_classroom.py` | Vanilla LSTM (NumPy) | Scalar & vector LSTM cells, classroom calculations, 3 architectures, BPTT |
+| `part_b/rnn_ex58_gru_numpy_classroom.py` | Vanilla GRU (NumPy) | Scalar arithmetic trace, vectorized cell, manual BPTT, 3 architectures |
+| `part_b/rnn_ex59_gru_exercise.py` | GRU Sequence Modeling Exercise | Custom GRU vs Native PyTorch GRU/LSTM/RNN, loss curves, test forecasting |
+
+```bash
+python part_b/rnn_ex58_gru_numpy_classroom.py      # NumPy GRU derivation and classroom trace
+python part_b/rnn_ex59_gru_exercise.py             # PyTorch GRU vs LSTM vs RNN benchmark & exercise
+```
 
 ### Part C — Dataset Exercises (EDA, Train/Validate/Test + Plots)
 
@@ -406,7 +417,7 @@ python part_f/pf05_vae_style_composer.py       # interpolates classical<->rock i
 DL_Lab/
 ├── README.md                # this file (syllabus + 50-question bank + exercises)
 ├── part_a/                  # practical_01..practical_30 (Foundations, Activations, Losses, MLPs, Optimizers, PyTorch DNNs) + figures/
-├── part_b/                  # cnn_q01..q20, rnn_q21..q34, gan_q35..q43, gnn_q44..q50 (Question bank) + cnn_ex00..ex09 (CNN exercises) + rnn_ex51..ex57 (RNN demos & translation) + engmiz.txt
+├── part_b/                  # cnn_q01..q20, rnn_q21..q34, gan_q35..q43, gnn_q44..q50 (Question bank) + cnn_ex00..ex09 (CNN exercises) + rnn_ex51..ex59 (RNN & GRU demos, translation) + engmiz.txt
 ├── part_c/                  # pc01..pc05 dataset exercises (Iris, Cancer, MNIST, Fashion-MNIST, Time Complexity) + figures/
 ├── part_d/                  # pd01..pd13 network-security exercises, security_utils.py, data/ + figures/
 ├── part_e/                  # pe01..pe12 NLP/Transformer/LLM + Mizo translation, data/ + figures/
